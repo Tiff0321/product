@@ -3,24 +3,38 @@
 @section('title','用户注册')
 @section('content')
     <h1>用户注册</h1>
-    <form action="{{route('users.store')}}" method="post">
-        {{csrf_field()}}
-        <table>
-            <tr>
-                <td>用户名：</td>
-                <td><input type="text" name="name" id="name"></td>
-            </tr>
-            <tr>
-                <td>用户邮箱：</td>
-                <td><input type="text" name="email" id="email"></td>
-            </tr>
-            <tr>
-                <td>用户密码：</td>
-                <td><input type="password" name="password" id="password"></td>
-            </tr>
-            <tr>
-                <td colspan="2"><button type="submit">提交</button></td>
-            </tr>
-        </table>
-    </form>
+    <div class="offset-md-2 col-md-8">
+        <div class="card ">
+            <div class="card-header">
+                <h5>注册</h5>
+            </div>
+            <div class="card-body">
+                @include('shared._errors')
+                <form method="POST" action="{{ route('users.store') }}">
+                    {{ csrf_field() }}
+                    <div class="mb-3">
+                        <label for="name">名称：</label>
+                        <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email">邮箱：</label>
+                        <input type="text" name="email" class="form-control" value="{{ old('email') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password">密码：</label>
+                        <input type="password" name="password" class="form-control" value="{{ old('password') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password_confirmation">确认密码：</label>
+                        <input type="password" name="password_confirmation" class="form-control" value="{{ old('password_confirmation') }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">注册</button>
+                </form>
+            </div>
+        </div>
+    </div>
 @stop
