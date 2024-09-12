@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -31,7 +33,7 @@ class SessionsController extends Controller
 //        if (Auth::attempt(['email' => $email, 'password' => $password])) {
 //            // 该用户存在于数据库，且邮箱和密码相符合
 //        }
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials,$request->has('remember'))) {
             // 登录成功后的相关操作
             session()->flash('success', '欢迎回来！');
             return redirect()->route('users.show', [Auth::user()]);
@@ -47,8 +49,11 @@ class SessionsController extends Controller
 
     }
 
-    public function destroy()
+    public function destroy(): Redirector|Application|RedirectResponse
     {
+        Auth::logout();
+        session()->flash('success', '您已成功退出！');
+        return redirect('login');
 
     }
 }
