@@ -41,3 +41,13 @@ Route::post('password/email',  'PasswordController@sendResetLinkEmail')->name('p
 
 Route::get('password/reset/{token}',  'PasswordController@showResetForm')->name('password.reset');
 Route::post('password/reset',  'PasswordController@reset')->name('password.update');
+//产品功能开发
+Route::resource('products','ProductsController');
+
+//Route::get('/products', 'ProductsController@index')->name('products.index');
+//Route::get('/products/create', 'ProductsController@create')->name('products.create');
+//Route::get('/products/{product}', 'ProductsController@show')->name('products.show');
+//Route::post('/products', 'ProductsController@store')->name('products.store');
+//Route::get('/products/{product}/edit', 'ProductsController@edit')->name('products.edit');
+//Route::patch('/products/{product}', 'ProductsController@update')->name('products.update');
+//Route::delete('/products/{product}', 'ProductsController@destroy')->name('products.destroy');
