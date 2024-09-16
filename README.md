@@ -1,10 +1,43 @@
 这是一个简单的laravel商品项目
 以下记录项目创建流程
-1.创建项目
-composer create-project laravel/laravel product-laravel9 --prefer-dist "9.1.*"
-2.
+1.用户功能开发
+2.产品功能开发
+创建数据迁移文件
+php artisan make:migration create_stocks_table
+php artisan make:migration create_product_images_table
+php artisan make:migration create_categories_table
+php artisan make:migration create_brands_table
+php artisan make:migration create_products_table
+php artisan migrate
+创建数据模型
+php artisan make:model Category
+php artisan make:model Brand
+php artisan make:model Product
+创建仓库和种子
+php artisan make:factory CategoryFactory
+php artisan make:seeder CategorySeeder
+php artisan make:factory ProductFactory
+php artisan make:seeder ProductSeeder
+php artisan make:factory BrandFactory
+php artisan make:seeder BrandSeeder
+生成数据
+php artisan db:seed
+php artisan db:seed --class=BrandSeeder
+php artisan db:seed --class=ProductSeeder
 
+php artisan make:policy ProductPolicy
 
+购买库存表减一是通过数据库的触发器实现的
+CREATE TRIGGER update_stock_after_purchase
+AFTER INSERT ON user_product
+FOR EACH ROW
+BEGIN
+IF NEW.type = 'purchased' THEN
+UPDATE stocks
+SET quantity = quantity - 1
+WHERE product_id = NEW.product_id;
+END IF;
+END
 
 
 ## 作业：练习写商品的增删改查

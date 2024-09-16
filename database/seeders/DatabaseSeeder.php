@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        //Model::unguard();
+        //Model::reguard();
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
@@ -22,9 +24,14 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            // 其他Seeder...
+
+            UsersTableSeeder::class,
             CategorySeeder::class,
-           // ProductSeeder::class,
+            ProductSeeder::class,
+            BrandSeeder::class,
+            UserProductSeeder::class,
+            StockSeeder::class,
+            ProductImageSeeder::class,
 
         ]);
     }
