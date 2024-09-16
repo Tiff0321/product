@@ -15,6 +15,25 @@
                                 <label for="search" class="form-label">搜索</label>
                                 <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}">
                             </div>
+
+
+                                    <div class="col-auto">
+                                        <label for="min_price" class="col-form-label">最低价格</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="number" id="min_price" name="min_price" class="form-control"
+                                               value="{{ request('min_price') }}" min="0" step="0.01">
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="max_price" class="col-form-label">最高价格</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="number" id="max_price" name="max_price" class="form-control"
+                                               value="{{ request('max_price') }}" min="0" step="0.01">
+                                    </div>
+
+
+
                             <div class="mb-3">
                                 <label for="category" class="form-label">分类</label>
                                 <select class="form-select" id="category" name="category">

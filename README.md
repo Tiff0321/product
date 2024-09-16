@@ -38,6 +38,10 @@ SET quantity = quantity - 1
 WHERE product_id = NEW.product_id;
 END IF;
 END
+使用了laravel的内置文件系统上传图片
+php artisan storage:link
+<img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+
 
 
 ## 作业：练习写商品的增删改查
