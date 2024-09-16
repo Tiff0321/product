@@ -82,12 +82,52 @@
                                     <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
                                     <p class="card-text"><strong>价格:</strong> ￥{{ number_format($product->price, 2) }}</p>
                                     <p class="card-text"><small class="text-muted">{{ $product->brand->name }} | {{ $product->category->name }}</small></p>
+                                    <p class="card-text">库存：<small class="text-muted">
+                                            @if($product->stock->quantity <= 0)
+                                                商品已经告罄
+                                            @else
+                                             {{ $product->stock->quantity }}
+                                            @endif</small></p>
+
+
+
                                 </div>
                                 <div class="card-footer">
                                     <a href="{{ route('products.show', $product) }}" class="btn btn-primary">查看详情</a>
                                     @can('update',$product)
-                                        <a href="{{ route('products.edit', $product) }}" class="btn btn-info">更新</a>
+                                        <a href="{{ route('products.edit', $product) }}">更新</a>
                                     @endcan
+
+
+                                    <div class="text-center mt-2 mb-4">
+                                        @if (Auth::user()->isFavorite($product->id))
+                                            <form action="{{ route('products.unfavorite', $product->id) }}" method="post">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">取消收藏</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('products.favorite', $product->id) }}" method="post">
+                                                {{ csrf_field() }}
+                                                <button type="submit" class="btn btn-sm btn-primary">收藏</button>
+                                            </form>
+                                        @endif
+                                    </div>
+
+                                    <form action="{{ route('products.purchased', $product->id) }}" method="post" class="btn">
+                                        {{ csrf_field() }}
+                                        @if($product->stock->quantity <= 0)
+                                            商品已经告罄
+                                            @else
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">购买</button>
+                                            @endif
+
+                                    </form>
+
+
+
+
+
 
                                     @can('destroy',$product)
                                         <form action="{{ route('products.destroy', $product->id) }}" method="POST"

@@ -169,5 +169,18 @@ class UsersController extends Controller
 
 }
 
+    public function favorite(User $user): Factory|View|Application
+    {
+        $products=$user->favoriteProducts()->paginate(5);
+        return view('users.show_favorite',compact('products'));
+
+}
+
+    public function purchased(User $user): Factory|View|Application
+    {
+        $products=$user->purchasedProducts()->paginate(5);
+        return view('users.show_purchased',compact('products'));
+
+}
 
 }

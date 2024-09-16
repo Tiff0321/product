@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -59,4 +60,55 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function favoriteProducts(): BelongsToMany
+    {
+        //$user->favoriteProducts()->attach([2,3])
+        //$user->favoriteProducts()->sync([2,3],false)
+        //$user->favoriteProducts()->allRelatedIds()->toArray()
+        //$user->favoriteProducts()->detach([2,3])
+
+        return $this->belongsToMany(Product::class,'user_product')
+            ->wherePivot('type', 'favorite')
+            ->withTimestamps();
+    }
+
+    public function purchasedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'user_product')
+            ->wherePivot('type', 'purchased')
+            ->withTimestamps();
+    }
+
+    public function favorite($product_ids)
+    {
+        if ( ! is_array($product_ids)) {
+            $product_ids= compact('product_ids');
+        }
+        $this->favoriteProducts()->sync($product_ids, false);
+
+    }
+
+    public function purchased($product_ids)
+    {
+        if ( ! is_array($product_ids)) {
+            $product_ids= compact('product_ids');
+        }
+        $this->purchasedProducts()->attach($product_ids, ['type' => 'purchased']);
+
+    }
+
+    public function unFavorite($product_ids)
+    {
+        if ( ! is_array($product_ids)) {
+            $product_ids= compact('product_ids');
+        }
+        $this->favoriteProducts()->detach($product_ids);
+
+    }
+
+    public function isFavorite($product_id)
+    {
+        return $this->favoriteProducts->contains($product_id);
+    }
 }

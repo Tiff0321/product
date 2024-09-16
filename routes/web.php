@@ -51,3 +51,13 @@ Route::resource('products','ProductsController');
 //Route::get('/products/{product}/edit', 'ProductsController@edit')->name('products.edit');
 //Route::patch('/products/{product}', 'ProductsController@update')->name('products.update');
 //Route::delete('/products/{product}', 'ProductsController@destroy')->name('products.destroy');
+
+Route::get('/users/{user}/favorite','UsersController@favorite')->name('users.favorite');
+Route::get('/users/{user}/purchased','UsersController@purchased')->name('users.purchased');
+
+Route::post('/products/{product}/favorite','ProductsController@favorite')->name('products.favorite');
+Route::delete('/products/{product}/favorite','ProductsController@unfavorite')->name('products.unfavorite');
+Route::post('/products/{product}/purchased','ProductsController@purchased')->name('products.purchased');
+////收藏和取消收藏
+//Route::post('/users/favorite/{user}', 'UsersController@favorite')->name('followers.store');
+//Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');

@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ProductsController extends Controller
@@ -140,7 +144,10 @@ class ProductsController extends Controller
 
     }
 
-    public function destroy(Product $product)
+    /**
+     * @throws AuthorizationException
+     */
+    public function destroy(Product $product): RedirectResponse
     {
         //与policy一起使用
         $this->authorize('destroy', $product);
@@ -148,5 +155,36 @@ class ProductsController extends Controller
         session()->flash('success', '产品已被成功删除！');
         return redirect()->back();
     }
+
+    public function favorite(Product $product): RedirectResponse
+    {
+
+        if ( ! Auth::user()->isFavorite($product->id)) {
+            Auth::user()->favorite($product->id);
+        }
+        session()->flash('success','收藏成功');
+
+        return redirect()->route('products.index', $product->id);
+    }
+
+    public function unfavorite(product $product)
+    {
+
+        if (Auth::user()->isFavorite($product->id)) {
+            Auth::user()->unFavorite($product->id);
+        }
+
+        session()->flash('success', '已经取消收藏');
+        return redirect()->route('products.index', $product->id);
+    }
+
+    public function purchased(product $product)
+    {
+        Auth::user()->purchased($product->id);
+        session()->flash('success', '购买成功');
+        return redirect()->route('products.index', $product->id);
+    }
+
+
 
 }
