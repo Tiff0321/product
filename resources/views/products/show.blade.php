@@ -35,6 +35,17 @@
             <td>商品品牌：</td>
             <td>{{$brand}}</td>
         </tr>
+
+        @foreach($product->images as $image)
+            <img src="{{ asset('storage/' . $image->image_url) }}" alt="Product Image">
+        @if(Auth::user()->is_admin)
+            <form action="{{ route('ProductImages.delete', ['product' => $product->id, 'image' => $image->id]) }}" method="post">
+                {{ csrf_field() }}
+                {{ method_field('DELETE') }}
+                <button type="submit" class="btn btn-sm btn-outline-primary">删掉图片</button>
+            </form>
+            @endif
+        @endforeach
     </table>
 
     @can('update',$product)

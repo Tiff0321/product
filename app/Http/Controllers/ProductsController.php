@@ -122,6 +122,7 @@ class ProductsController extends Controller
 
     public function update(Request $request,Product $product)
     {
+
         $validatedData=$request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -129,6 +130,8 @@ class ProductsController extends Controller
             'brand' => 'required|exists:brands,id',
             'category' => 'required|exists:categories,id',
         ]);
+
+        dd($request->images);
 
         $product->update([
             'name' => $validatedData['name'],
@@ -139,7 +142,7 @@ class ProductsController extends Controller
         ]);
 
         session()->flash('success','商品信息更新成功');
-        return redirect()->route('products.show', $product);
+        //return redirect()->route('products.show', $product);
 
 
     }

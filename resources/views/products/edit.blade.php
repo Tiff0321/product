@@ -52,10 +52,19 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="images">商品图片：</label>
+                        <a href="{{route('ProductImages.edit',$product)}}">
+                            点击上传商品图片
+                        </a>
+{{--                        <input class="form-control"  type="file" name="images" id="images" enctype="multipart/form-data" value="{{$product->images}}">--}}
+                    </div>
 
 
                     <button type="submit" class="btn btn-primary">修改</button>
                 </form>
+
+
             </div>
         </div>
     </div>

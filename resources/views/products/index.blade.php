@@ -76,7 +76,12 @@
                     @foreach($products as $product)
                         <div class="col">
                             <div class="card h-100">
-                                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
+{{--                                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">--}}
+                                @foreach($product->images as $image)
+                                    <img src="{{ asset('storage/' . $image->image_url) }}" alt="Product Image">
+                                @endforeach
+
+
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $product->name }}</h5>
                                     <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
@@ -95,7 +100,7 @@
                                 <div class="card-footer">
                                     <a href="{{ route('products.show', $product) }}" class="btn btn-primary">查看详情</a>
                                     @can('update',$product)
-                                        <a href="{{ route('products.edit', $product) }}">更新</a>
+                                        <a href="{{ route('products.edit', $product) }}">编辑</a>
                                     @endcan
 
 
