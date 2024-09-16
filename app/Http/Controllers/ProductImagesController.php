@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductImagesController extends Controller
 {
-    //
+    /**
+     * 商品图片的修改
+     *
+     * @param Product $product
+     * @return Factory|View|Application
+     */
     public function edit(Product $product): Factory|View|Application
     {
         return view('productimages.edit',compact('product'));
@@ -32,8 +37,16 @@ class ProductImagesController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', '商品图片已成功上传');
+        return redirect()->route('products.index')->with('success', '商品图片已成功上传');
     }
+
+    /**
+     * 商品图片的删除
+     *
+     * @param Product $product
+     * @param ProductImage $image
+     * @return RedirectResponse
+     */
 
     public function delete(Product $product, ProductImage $image): RedirectResponse
     {

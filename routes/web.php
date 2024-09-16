@@ -62,6 +62,4 @@ Route::post('/products/{product}/purchased','ProductsController@purchased')->nam
 Route::get('/products/{product}/images','ProductImagesController@edit')->name('ProductImages.edit');
 Route::post('/products/{product}/images','ProductImagesController@update')->name('ProductImages.update');
 Route::delete('/products/{product}/images/{image}','ProductImagesController@delete')->name('ProductImages.delete');
-////收藏和取消收藏
-//Route::post('/users/favorite/{user}', 'UsersController@favorite')->name('followers.store');
-//Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');
+

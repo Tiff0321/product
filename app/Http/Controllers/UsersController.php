@@ -169,6 +169,12 @@ class UsersController extends Controller
 
 }
 
+    /**
+     * 展示用户收藏页面
+     *
+     * @param User $user
+     * @return Factory|View|Application
+     */
     public function favorite(User $user): Factory|View|Application
     {
         $products=$user->favoriteProducts()->paginate(5);
@@ -176,6 +182,12 @@ class UsersController extends Controller
 
 }
 
+    /**
+     * 展示用户购买页面
+     *
+     * @param User $user
+     * @return Factory|View|Application
+     */
     public function purchased(User $user): Factory|View|Application
     {
         $products=$user->purchasedProducts()->paginate(5);

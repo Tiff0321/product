@@ -89,9 +89,9 @@ class Product extends Model
     /**
      * 获取商品的主图。
      */
-    public function getMainImageAttribute(): Model|HasMany|null
+    public function getMainImageAttribute()
     {
-        return $this->images()->first();
+        return $this->images()->first()->image_url;
     }
 
 

@@ -10,6 +10,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,16 +24,22 @@ class ProductsController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * 商品新增页面
+     *
+     * @return Factory|View|Application
+     */
     public function create(): Factory|View|Application
     {
         $brands=Brand::select('id', 'name')->get();
         $categories=Category::select('id','name')->get();
 
-//        var_dump($brands);
         return view('products.create',compact('brands','categories'));
     }
 
     /**
+     * 商品新增
+     *
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
@@ -62,6 +69,12 @@ class ProductsController extends Controller
     }
 
 
+    /**
+     * 商品详情页展示
+     *
+     * @param Product $product
+     * @return Factory|View|Application
+     */
     public function show(Product $product): Factory|View|Application
     {
         $category=$product->category()->value('name');
@@ -77,38 +90,67 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-//        $products=Product::all();
-//        return view('products.index',compact('products'));
-        //预加载
-        $query = Product::with(['brand', 'category']);
+        $query = Product::with(['category', 'brand']);
 
         // 搜索
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
+        $query->when($request->filled('search'), function (Builder $query) use ($request) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+//                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        });
 
         // 分类筛选
-        if ($request->has('category')) {
-            $query->where('category_id', $request->category);
-        }
+        $query->when($request->filled('category'), function (Builder $query) use ($request) {
+            $query->where('category_id', $request->input('category'));
+        });
 
         // 品牌筛选
-        if ($request->has('brand')) {
-            $query->where('brand_id', $request->brand);
-        }
+        $query->when($request->filled('brand'), function (Builder $query) use ($request) {
+            $query->where('brand_id', $request->input('brand'));
+        });
+
+        // 时间范围筛选
+        $query->when($request->filled(['start_date', 'end_date']), function (Builder $query) use ($request) {
+            $query->whereBetween('created_at', [
+                $request->input('start_date') . ' 00:00:00',
+                $request->input('end_date') . ' 23:59:59'
+            ]);
+        });
+
+        // 价格范围筛选
+        $query->when($request->filled(['min_price', 'max_price']), function (Builder $query) use ($request) {
+            $query->whereBetween('price', [
+                $request->input('min_price'),
+                $request->input('max_price')
+            ]);
+        });
 
         // 排序
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
-        $query->orderBy($sort, $direction);
+        $sortField = $request->input('sort', 'created_at');
+        $sortDirection = $request->input('direction', 'desc');
+        $query->orderBy($sortField, $sortDirection);
+        // 分页
+        $products = $query->paginate($request->input('per_page', 15));
 
-        $products = $query->paginate(12)->appends($request->all());
+        // 获取所有分类和品牌，用于筛选选项
         $categories = Category::all();
         $brands = Brand::all();
 
-        return view('products.index', compact('products', 'categories', 'brands'));
+        // 获取价格范围
+        $priceRange = Product::selectRaw('MIN(price) as min_price, MAX(price) as max_price')->first();
+
+        return view('products.index', compact('products', 'categories', 'brands', 'priceRange'));
+
     }
 
+    /**
+     * 商品更新页面
+     *
+     * @param Product $product
+     * @return Factory|View|Application
+     */
 
     public function edit(Product $product): Factory|View|Application
     {
@@ -120,6 +162,13 @@ class ProductsController extends Controller
          return view('products.edit',compact('product','brands','categories'));
     }
 
+    /**
+     * 商品更新
+     *
+     * @param Request $request
+     * @param Product $product
+     * @return void
+     */
     public function update(Request $request,Product $product)
     {
 
@@ -131,7 +180,6 @@ class ProductsController extends Controller
             'category' => 'required|exists:categories,id',
         ]);
 
-        dd($request->images);
 
         $product->update([
             'name' => $validatedData['name'],
@@ -148,6 +196,8 @@ class ProductsController extends Controller
     }
 
     /**
+     * 商品删除
+     *
      * @throws AuthorizationException
      */
     public function destroy(Product $product): RedirectResponse
@@ -159,6 +209,12 @@ class ProductsController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * 商品收藏
+     *
+     * @param Product $product
+     * @return RedirectResponse
+     */
     public function favorite(Product $product): RedirectResponse
     {
 
@@ -170,6 +226,12 @@ class ProductsController extends Controller
         return redirect()->route('products.index', $product->id);
     }
 
+    /**
+     * 商品取消收藏
+     *
+     * @param Product $product
+     * @return RedirectResponse
+     */
     public function unfavorite(product $product)
     {
 
@@ -181,6 +243,12 @@ class ProductsController extends Controller
         return redirect()->route('products.index', $product->id);
     }
 
+    /**
+     * 商品购买
+     *
+     * @param Product $product
+     * @return RedirectResponse
+     */
     public function purchased(product $product)
     {
         Auth::user()->purchased($product->id);
