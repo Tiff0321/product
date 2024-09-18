@@ -37,7 +37,8 @@ class ProductImagesController extends Controller
             }
         }
 
-        return redirect()->route('products.index')->with('success', '商品图片已成功上传');
+        session()->flash('success','商品图片已经更新');
+        return redirect()->route('products.edit', $product->id);
     }
 
     /**
@@ -68,6 +69,6 @@ class ProductImagesController extends Controller
             session()->flash('success', '图片删除成功');
 
         // 重定向回产品编辑页面
-        return redirect()->back();
+        return redirect()->route('products.show', $product->id);
     }
 }

@@ -56,4 +56,5 @@ class ProductImage extends Model
     {
         $this->attributes['image_url'] = str_replace('public/', '', $value);
     }
+
 }

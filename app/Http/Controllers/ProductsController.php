@@ -93,11 +93,16 @@ class ProductsController extends Controller
         $query = Product::with(['category', 'brand']);
 
         // 搜索
+        // 当搜索条件存在时，执行搜索逻辑
         $query->when($request->filled('search'), function (Builder $query) use ($request) {
+            // 获取搜索关键词
             $searchTerm = $request->input('search');
+            // 构建搜索查询
             $query->where(function ($q) use ($searchTerm) {
+                // 在商品名称中搜索关键词
                 $q->where('name', 'like', "%{$searchTerm}%");
-//                    ->orWhere('description', 'like', "%{$searchTerm}%");
+                // 注释掉的代码：也可以在商品描述中搜索关键词
+                //->orWhere('description', 'like', "%{$searchTerm}%");
             });
         });
 
@@ -190,7 +195,7 @@ class ProductsController extends Controller
         ]);
 
         session()->flash('success','商品信息更新成功');
-        //return redirect()->route('products.show', $product);
+        return redirect()->route('products.show', $product);
 
 
     }
