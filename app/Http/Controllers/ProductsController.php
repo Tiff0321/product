@@ -257,6 +257,7 @@ class ProductsController extends Controller
     public function purchased(product $product)
     {
         Auth::user()->purchased($product->id);
+        DB::table('stocks')->decrement('quantity');
         session()->flash('success', '购买成功');
         return redirect()->route('products.index', $product->id);
     }
